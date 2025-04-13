@@ -9,6 +9,8 @@ Person::Person(){
 
 Person::~Person(){
     delete birthdate;
+    delete phone; 
+    delete email; 
     // TODO: complete the method!
 }
 
@@ -16,6 +18,11 @@ Person::~Person(){
 Person::Person(string f_name, string l_name, string b_date, string email, string phone){
     // TODO: Complete this method!
     // phone and email strings are in full version
+    this->f_name = f_name;
+    this->l_name = l_name;
+    birthdate = new Date(b_date);
+    this->email = new Email("Work", email);
+    this->phone = new Phone("Home", phone);
 }
 
 
@@ -33,6 +40,10 @@ void Person::set_person(){
     
     string temp;
     string type;
+    string email_type;
+    string email_address; 
+    string phone_type;
+    string phone_number;     
 
     cout << "First Name: ";
     // pay attention to how we read first name, as it can have spaces!
@@ -47,15 +58,21 @@ void Person::set_person(){
     birthdate = new Date(temp); 
 
     cout << "Type of email address: ";
-    // code here
+    std::getline(std::cin, email_type);  
     cout << "Email address: ";
     // code here
-
+    std::getline(std::cin, email_address);       
+    
     cout << "Type of phone number: ";
     // code here
+    std::getline(std::cin, phone_type);
     cout << "Phone number: ";
     // code here
     // code here
+    std::getline(std::cin, phone_number);
+    
+    email = new Email(email_type, email_address); 
+    phone = new Phone(phone_type, phone_number);
 }
 
 
@@ -64,6 +81,24 @@ void Person::set_person(string filename){
     // Look at person_template files as examples.     
     // Phone number in files can have '-' or not.
     // TODO: Complete this method!
+
+    ifstream file(filename.c_str());
+
+    string b_date, email_type, email_address, phone_type, phone_number;
+
+    getline(file, f_name);
+    getline(file, l_name);
+    getline(file, b_date);
+    getline(file, email_type);
+    getline(file, email_address);
+    getline(file, phone_type);
+    getline(file, phone_number);
+
+    birthdate = new Date(b_date);
+    email = new Email(email_type, email_address);
+    phone = new Phone(phone_type, phone_number);
+
+    file.close();
     
 }
 
