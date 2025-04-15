@@ -14,34 +14,129 @@ Network::Network(string fileName){
     // TODO: complete this method!
     // Implement it in one single line!
     // You may need to implement the load method before this!
+    loadDB(fileName);
 }
 
 Network::~Network(){ 
+    Person* current = head; // pointer 
+    while (current != NULL){ // while not at the end
+        Person* temp = current; // pointer to current
+        current = current->next; // point to next element
+        delete temp; // deallocate
+    }
+    // reinitialize
+    head = NULL;
+    tail = NULL;
+    count = 0;
 }
 
 Person* Network::search(Person* searchEntry){
     // Searches the Network for searchEntry
     // if found, returns a pointer to it, else returns NULL
-    // TODO: Complete this method
+    
+    Person* current = head;
+    while(current != NULL){
+        if(*current == searchEntry){    // overloaded ==
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;    // catch-all
 }
 
 
 Person* Network::search(string fname, string lname){
     // New == for Person, only based on fname and lname
     // if found, returns a pointer to it, else returns NULL
-    // TODO: Complete this method
-    // Note: two ways to implement this, 1st making a new Person with fname and lname and and using search(Person*), 2nd using fname and lname directly. 
+    // Note: two ways to implement this, 1st making a new Person with fname and lname and and using search(Person*), 2nd using fname and lname directly.
+
+    Person* current = head; 
+    while(current != NULL){
+        if(current->f_name == fname && current->l_name == lname){
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
 }
 
 
 
 
 void Network::loadDB(string filename){
-    // TODO: Complete this method
+    ifstream infile(filename);
+    if(!infile){
+        cout << "File could not be opened" << endl;
+        return;
+    }
+
+    // clear the existing list
+    Person* current = head;
+    while(current != NULL){
+        Person* temp = current;
+        current = current->next;
+        delete temp;
+    }
+    head = NULL;
+    tail = NULL;
+    count = 0; 
+
+    string first, last, bday;
+    string emailType, email, phoneType, phone;
+
+    // parse file line by line
+    while(getline(infile, first)) {
+        getline(infile, last);
+        getline(infile, bday);
+
+        getline(infile, emailType);
+        emailType = emailType.substr(1, emailType.length()-2);  // remove parenthesis
+        getline(infile, email);
+
+        getline(infile, phoneType);
+        phoneType = phoneType.substr(1, phoneType.length()-2);  // remove parenthesis
+        getline(infile, phone);
+
+        getline(infile, bday);  // read the separator line
+
+        // construct each person object
+        Person* p = new Person(first, last, bday);
+        p->add_contact(new Email(emailType, email));
+        p->add_contact(new Phone(phoneType, phone));
+
+        // add it with push_back
+        push_back(p);
+    }
 }
 
+// TODO: can we change person::print_person() to return a string
+// or be sendable to an output file (not cout) to simplify this?
 void Network::saveDB(string filename){
-    // TODO: Complete this method
+    ofstream outfile(filename);
+    if(!outfile) {
+        cout << "File could not be opened" << endl;
+        return;
+    }
+
+    Person* current = head;
+    while(current != NULL){
+        outfile << current->f_name << " " << current->l_name << endl;
+        outfile << current->birthdate->get_date("MM/DD/YYYY") << endl; // Or another format you prefer
+
+        // print email in format: (Type) email_address
+        outfile << "(" << current->email->type << ")" << endl;
+        outfile << current->email->get_contact("full") << endl;
+
+        // print phone in format: (Type) phone_number
+        outfile << "(" << current->phone->type << ")" << endl;
+        outfile << current->phone->get_contact("full") << endl;
+
+        outfile << "--------------------" << endl;
+
+        current = current->next;
+    }
+
+    outfile.close();
 }
 
 
@@ -60,7 +155,7 @@ void Network::printDB(){
 }
 
 
-
+// completed: add person to front of LL
 void Network::push_front(Person* newEntry){
     newEntry->prev = NULL;
     newEntry->next = head;
@@ -77,12 +172,46 @@ void Network::push_front(Person* newEntry){
 
 void Network::push_back(Person* newEntry){
     // Adds a new Person (newEntry) to the back of LL
-    // TODO: Complete this method
+    newEntry->next = NULL;
+    newEntry->prev = tail;
+
+    if(tail != NULL){
+        tail->next = newEntry;
+    }else{
+        head = newEntry;
+    }
+
+    tail = newEntry;
+    count++;
 }
 
-
+// removes a person from the DLL by name
 bool Network::remove(string fname, string lname){
-    // TODO: Complete this method
+    Person* target = search(fname, lname);
+    if(!target){
+        return false;
+    }
+
+    // found case 1: element has a previous value
+    // link next to previous to skip target
+    if(target->prev){
+        target->prev->next = target->next;
+    }else{
+        head = target->next;
+    }
+
+    // found case 2: element has a next value
+    // link previous to next to skip target
+    if(target->next){
+        target->next->prev = target->prev;
+    }else{
+        tail = target->prev;
+    }
+
+    //
+    delete target;
+    count--;    // denote removal of an element
+    return true;    
  
 }
 
@@ -173,4 +302,3 @@ void Network::showMenu(){
         cout << "\033[2J\033[1;1H";
     }
 }
-
