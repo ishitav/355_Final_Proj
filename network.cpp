@@ -185,6 +185,7 @@ void Network::push_back(Person* newEntry){
     count++;
 }
 
+
 // removes a person from the DLL by name
 bool Network::remove(string fname, string lname){
     Person* target = search(fname, lname);
@@ -205,7 +206,10 @@ bool Network::remove(string fname, string lname){
     if(target->next){
         target->next->prev = target->prev;
     }else{
+
         tail = target->prev;
+        
+
     }
 
     //
