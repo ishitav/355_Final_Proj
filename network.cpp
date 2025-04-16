@@ -14,9 +14,20 @@ Network::Network(string fileName){
     // TODO: complete this method!
     // Implement it in one single line!
     // You may need to implement the load method before this!
+    loadDB(fileName);
 }
 
 Network::~Network(){ 
+    Person* current = head; // pointer 
+    while (current != NULL){ // while not at the end
+        Person* temp = current; // pointer to current
+        current = current->next; // point to next element
+        delete temp; // deallocate
+    }
+    // reinitialize
+    head = NULL;
+    tail = NULL;
+    count = 0;
 }
 
 Person* Network::search(Person* searchEntry){
@@ -174,6 +185,7 @@ void Network::push_back(Person* newEntry){
     count++;
 }
 
+
 // removes a person from the DLL by name
 bool Network::remove(string fname, string lname){
     Person* target = search(fname, lname);
@@ -194,7 +206,10 @@ bool Network::remove(string fname, string lname){
     if(target->next){
         target->next->prev = target->prev;
     }else{
-        tail = target=>prev;
+
+        tail = target->prev;
+        
+
     }
 
     //
@@ -291,4 +306,3 @@ void Network::showMenu(){
         cout << "\033[2J\033[1;1H";
     }
 }
-
