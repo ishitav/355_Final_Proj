@@ -45,16 +45,18 @@ Person* Network::search(Person* searchEntry){
 }
 
 
-Person* Network::search(string fname, string lname){
-    // New == for Person, only based on fname and lname
-    // if found, returns a pointer to it, else returns NULL
-    // Note: two ways to implement this, 1st making a new Person with fname and lname and and using search(Person*), 2nd using fname and lname directly.
-
+Person* Network::search(string fname, string lname) {
     Person* current = head; 
-    while(current != NULL){
-        if(current->f_name == fname && current->l_name == lname){
+    while (current != NULL) {
+        bool lastMatch = (current->l_name == lname);
+
+        // Case-sensitive partial match for first name
+        bool firstMatch = (current->f_name.find(fname) != string::npos);
+
+        if (firstMatch && lastMatch) {
             return current;
         }
+
         current = current->next;
     }
     return NULL;
@@ -65,72 +67,85 @@ Person* Network::search(string fname, string lname){
 
 void Network::loadDB(string filename){
     ifstream infile(filename);
-    if(!infile){
+    if (!infile) {
         cout << "File could not be opened" << endl;
         return;
     }
 
-    // clear the existing list
+    // Clear existing list
     Person* current = head;
-    while(current != NULL){
+    while (current != NULL) {
         Person* temp = current;
         current = current->next;
         delete temp;
     }
     head = NULL;
     tail = NULL;
-    count = 0; 
+    count = 0;
 
-    string first, last, bday;
-    string emailType, email, phoneType, phone;
+    string fname, lname, bday;
+    string emailLine, phoneLine;
 
-    // parse file line by line
-    while(getline(infile, first)) {
-        getline(infile, last);
-        getline(infile, bday);
+    while (getline(infile, fname)) {
+        getline(infile, lname);
+        getline(infile, bday);         // EX: "1/13/1961"
+        getline(infile, emailLine);    // EX: "(Work) julia@wh.com"
+        getline(infile, phoneLine);    // EX: "(Home) 310-192-2011"
+        string separator;
+        getline(infile, separator);    // --------------------
 
-        getline(infile, emailType);
-        emailType = emailType.substr(1, emailType.length()-2);  // remove parenthesis
-        getline(infile, email);
+        // Parse email
+        string emailType, email;
+        size_t ep = emailLine.find(')');
+        if (emailLine.front() == '(' && ep != string::npos) {
+            emailType = emailLine.substr(1, ep - 1);
+            email = emailLine.substr(ep + 2);
+        } else {
+            emailType = "Work";
+            email = "invalid@email.com";
+        }
 
-        getline(infile, phoneType);
-        phoneType = phoneType.substr(1, phoneType.length()-2);  // remove parenthesis
-        getline(infile, phone);
+        // Parse phone
+        string phoneType, phone;
+        size_t pp = phoneLine.find(')');
+        if (phoneLine.front() == '(' && pp != string::npos) {
+            phoneType = phoneLine.substr(1, pp - 1);
+            phone = phoneLine.substr(pp + 2);
+        } else {
+            phoneType = "Home";
+            phone = "0000000000";
+        }
 
-        getline(infile, bday);  // read the separator line
-
-        // construct each person object
-        Person* p = new Person(first, last, bday, email, phone);
-        // p->add_contact(new Email(emailType, email));
-        // p->add_contact(new Phone(phoneType, phone));
-
-        // add it with push_back
+        // Create person and push
+        Person* p = new Person(fname, lname, bday, emailType, email, phoneType, phone);
         push_back(p);
     }
 }
 
 // TODO: can we change person::print_person() to return a string
 // or be sendable to an output file (not cout) to simplify this?
-void Network::saveDB(string filename){
+void Network::saveDB(string filename) {
     ofstream outfile(filename);
-    if(!outfile) {
+    if (!outfile) {
         cout << "File could not be opened" << endl;
         return;
     }
 
     Person* current = head;
-    while(current != NULL){
-        outfile << current->f_name << " " << current->l_name << endl;
+    while (current != NULL) {
+        outfile << current->f_name << endl;
+        outfile << current->l_name << endl;
 
-        outfile << current->birthdate->print_date() << endl; 
+        // Print raw date string (M/D/YYYY) that loadDB expects
+        outfile << current->birthdate->get_formatted_date() << endl;
 
-        // print email in format: (Type) email_address
-        outfile << "(" << current->email->get_type() << ")" << endl;
-        outfile << current->email->get_contact("full") << endl;
+        // Email
+        outfile << "(" << current->email->get_type() << ") "
+                << current->email->get_contact("short") << endl;
 
-        // print phone in format: (Type) phone_number
-        outfile << "(" << current->phone->get_type() << ")" << endl;
-        outfile << current->phone->get_contact("full") << endl;
+        // Phone
+        outfile << "(" << current->phone->get_type() << ") "
+                << current->phone->get_contact("short") << endl;
 
         outfile << "--------------------" << endl;
 

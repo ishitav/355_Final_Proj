@@ -30,18 +30,15 @@ void Email::set_contact(){
 }
 
 
-string Email::get_contact(string style){
-    // Note: We have default argument in declaration and not in definition!
-    if (style=="full")
-	    return "(" + type + ") " + email_addr;
-    else 
+string Email::get_contact(string style) {
+    if (style == "full")
+        return "Email (" + type + "): " + email_addr;
+    else
         return email_addr;
 }
 
-
-void Email::print(){
-    // Note: get_contact is called with default argument
-	cout << this->get_contact() << endl;
+void Email::print() {
+    cout << get_contact() << endl;
 }
 
 
@@ -123,22 +120,20 @@ void Phone::set_contact(){
 
 }
 
+string Phone::get_contact(string style) {
+    string num_str = to_string(phone_num);  
+    string formatted = num_str;
 
-string Phone::get_contact(string style){
-    string num_str = to_string(phone_num); 
-    // TODO: Complete this method, get hint from Email 
-    string formatted = num_str.substr(0, 3) + "-" + num_str.substr(3, 3) + "-" + num_str.substr(6, 4);
+    if (num_str.length() == 10)
+        formatted = num_str.substr(0, 3) + "-" + num_str.substr(3, 3) + "-" + num_str.substr(6, 4);
 
-    if (style=="full")
-	    return "(" + type + ") " + formatted;
-    else 
+    if (style == "full")
+        return "(" + type + ") " + formatted;
+    else
         return formatted;
-
 }
 
-
-void Phone::print(){
-    // Note: get_contact is called with default argument
-	cout << this->get_contact() << endl; //need to figure out how this default arguement works
+void Phone::print() {
+    cout << this->get_contact() << endl;
 }
 

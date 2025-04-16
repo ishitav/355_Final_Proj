@@ -6,6 +6,13 @@ Person::Person(){
     set_person();
 }
 
+Person::Person(string f_name, string l_name, string b_date, string emailType, string email, string phoneType, string phone) {
+    this->f_name = f_name;
+    this->l_name = l_name;
+    birthdate = new Date(b_date);
+    this->email = new Email(emailType, email);
+    this->phone = new Phone(phoneType, phone);
+}
 
 Person::~Person(){
     delete birthdate;
@@ -23,6 +30,8 @@ Person::Person(string f_name, string l_name, string b_date, string email, string
     birthdate = new Date(b_date);
     this->email = new Email("Work", email);
     this->phone = new Phone("Home", phone);
+
+    // cout << "Created person " << f_name << l_name << endl; 
 }
 
 
@@ -75,39 +84,45 @@ void Person::set_person(){
     phone = new Phone(phone_type, phone_number);
 }
 
-
 void Person::set_person(string filename){
-    // reads a Person from a file
-    // Look at person_template files as examples.     
-    // Phone number in files can have '-' or not.
-    // TODO: Complete this method!
-
     ifstream file(filename.c_str());
 
-    string b_date, email_type, email_address, phone_type, phone_number;
+    if (!file.is_open()) {
+        cerr << "Error: Could not open file " << filename << endl;
+        return;
+    }
 
-    getline(file, f_name);
-    getline(file, l_name);
-    getline(file, b_date);
-    getline(file, email_type);
-    getline(file, email_address);
-    getline(file, phone_type);
-    getline(file, phone_number);
+    string b_date, email_line, phone_line;
 
-    if (birthdate) delete birthdate;
-        birthdate = new Date(b_date);
+    getline(file, f_name);     // Julia Scarlett Elizabeth
+    getline(file, l_name);     // Louis-Dreyfus
+    getline(file, b_date);     // 1/13/1961
+    getline(file, phone_line); // (Home) 310-192-2011
+    getline(file, email_line); // (Work) julia@wh.com
 
-    if (email) delete email;
-        email = new Email(email_type, email_address); 
+    birthdate = new Date(b_date);
 
-    if (phone) delete phone;
-        phone = new Phone(phone_type, phone_number);
+    // Parse phone
+    string phone_type = "Home", phone_number = "000-000-0000";
+    size_t phone_pos = phone_line.find(')');
+    if (phone_line.front() == '(' && phone_pos != string::npos) {
+        phone_type = phone_line.substr(1, phone_pos - 1);
+        phone_number = phone_line.substr(phone_pos + 2); // skip ") "
+    }
+
+    // Parse email
+    string email_type = "Work", email_address = "invalid@email.com";
+    size_t email_pos = email_line.find(')');
+    if (email_line.front() == '(' && email_pos != string::npos) {
+        email_type = email_line.substr(1, email_pos - 1);
+        email_address = email_line.substr(email_pos + 2); // skip ") "
+    }
+
+    email = new Email(email_type, email_address);
+    phone = new Phone(phone_type, phone_number);
 
     file.close();
-    
 }
-
-
 bool Person::operator==(const Person& rhs){
     // TODO: Complete this method!
     // Note: you should check first name, last name and birthday between two persons
@@ -138,6 +153,7 @@ void Person::print_person(){
     // Already implemented for you! Do not change!
 	cout << l_name <<", " << f_name << endl;
 	birthdate->print_date();
+    
     phone->print();
     email->print();
 }

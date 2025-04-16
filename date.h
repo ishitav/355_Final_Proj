@@ -12,7 +12,8 @@ private:
 
 public:
     Date(string raw_date);
-    string print_date(string format = "full");
+    void print_date(string format = "full");
+    string get_formatted_date(string format = "full");
     bool operator==(const Date& rhs);
 };
 

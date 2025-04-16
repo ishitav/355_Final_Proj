@@ -14,10 +14,14 @@ Date::Date(string raw_date) {
     ss >> month >> slash >> day >> slash >> year;
 }
 
-string Date::print_date(string format) {
-    if (format == "Month D, YYYY") {
+void Date::print_date(string format) {
+    
         cout << month_names[month] << " " << day << ", " << year << endl;
-    }
+    
+}
+
+string Date::get_formatted_date(string format) {
+    return month_names[month] + " " + to_string(day) + ", " + to_string(year);
 }
 
 bool Date::operator==(const Date& rhs) {
