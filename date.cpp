@@ -14,7 +14,7 @@ Date::Date(string raw_date) {
     ss >> month >> slash >> day >> slash >> year;
 }
 
-void Date::print_date(string format) {
+string Date::print_date(string format) {
     if (format == "Month D, YYYY") {
         cout << month_names[month] << " " << day << ", " << year << endl;
     }

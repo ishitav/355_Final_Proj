@@ -36,7 +36,7 @@ Person* Network::search(Person* searchEntry){
     
     Person* current = head;
     while(current != NULL){
-        if(*current == searchEntry){    // overloaded ==
+        if(*current == *searchEntry){    // overloaded ==
             return current;
         }
         current = current->next;
@@ -100,9 +100,9 @@ void Network::loadDB(string filename){
         getline(infile, bday);  // read the separator line
 
         // construct each person object
-        Person* p = new Person(first, last, bday);
-        p->add_contact(new Email(emailType, email));
-        p->add_contact(new Phone(phoneType, phone));
+        Person* p = new Person(first, last, bday, email, phone);
+        // p->add_contact(new Email(emailType, email));
+        // p->add_contact(new Phone(phoneType, phone));
 
         // add it with push_back
         push_back(p);
@@ -121,14 +121,15 @@ void Network::saveDB(string filename){
     Person* current = head;
     while(current != NULL){
         outfile << current->f_name << " " << current->l_name << endl;
-        outfile << current->birthdate->get_date("MM/DD/YYYY") << endl; // Or another format you prefer
+
+        outfile << current->birthdate->print_date() << endl; 
 
         // print email in format: (Type) email_address
-        outfile << "(" << current->email->type << ")" << endl;
+        outfile << "(" << current->email->get_type() << ")" << endl;
         outfile << current->email->get_contact("full") << endl;
 
         // print phone in format: (Type) phone_number
-        outfile << "(" << current->phone->type << ")" << endl;
+        outfile << "(" << current->phone->get_type() << ")" << endl;
         outfile << current->phone->get_contact("full") << endl;
 
         outfile << "--------------------" << endl;

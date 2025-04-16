@@ -94,9 +94,14 @@ void Person::set_person(string filename){
     getline(file, phone_type);
     getline(file, phone_number);
 
-    birthdate = new Date(b_date);
-    email = new Email(email_type, email_address);
-    phone = new Phone(phone_type, phone_number);
+    if (birthdate) delete birthdate;
+        birthdate = new Date(b_date);
+
+    if (email) delete email;
+        email = new Email(email_type, email_address); 
+
+    if (phone) delete phone;
+        phone = new Phone(phone_type, phone_number);
 
     file.close();
     
@@ -132,7 +137,7 @@ bool Person::operator!=(const Person& rhs){
 void Person::print_person(){
     // Already implemented for you! Do not change!
 	cout << l_name <<", " << f_name << endl;
-	birthdate->print_date("Month D, YYYY");
+	birthdate->print_date();
     phone->print();
     email->print();
 }

@@ -13,12 +13,13 @@ class Network{
         Person* tail;
         int count; 
         Person* search(Person* searchEntry);
-        Person* search(string fname, string lname);
+        
 
     public:
         Network();
         Network(string fileName);
         ~Network();
+        Person* search(string fname, string lname);
         void printDB();
         void push_front(Person* newEntry);
         void push_back(Person* newEntry);
