@@ -4,7 +4,7 @@ Ishita Vasishtha (<ishitavas@usc.edu>)
 
 Caitlin Sullivan (<ccsulliv@usc.edu>)
 
-Gerston (<name@usc.edu>)
+Gerson Estrada (<gdestrad@usc.edu>)
 
 # Final Project Phase 1: Classes and Methods
 
