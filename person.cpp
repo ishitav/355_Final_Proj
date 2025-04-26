@@ -1,5 +1,6 @@
 
 #include "person.h"
+#include <algorithm>
 
 Person::Person(){
     // I'm already done! 
@@ -100,6 +101,18 @@ void Person::set_person(string filename){
 
     file.close();
     
+}
+
+bool Person::add_friend(Person* p) {
+    if (p == this) return false;  // cannot friend self
+
+    // if already friends
+    if (std::find(friends.begin(), friends.end(), p) != friends.end()) {
+        return false;  // already friends
+    }
+
+    friends.push_back(p); // add friend to vector
+    return true;
 }
 
 

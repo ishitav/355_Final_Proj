@@ -236,25 +236,31 @@ bool Network::remove(string fname, string lname){
 }
 
 void Network::connect(){
-
-    // first person
-    getline(cin, fname);
-    getline(cin, lname);
-
-    Person* p1 = search(fname, lname);
-    if (!p1) {
-        cout << "Person not found\n";
+    if (!p1 || !p2) {
+        cout << "Error: One or both persons are NULL.\n";
         return;
     }
 
-    // second person
-    getline(cin, fname);
-    getline(cin, lname);
-    Person* p2 = search(fname, lname);
-    if (!p2) {
-        cout << "Person not found\n";
+    if (p1 == p2) {
+        cout << "A person cannot friend themselves.\n";
         return;
     }
+
+    // added friend 2 to friend 1's list
+    bool added1 = p1->add_friend(p2);
+    // added friend 1 to friend 2's list
+    bool added2 = p2->add_friend(p1);
+
+    cout << "\n";
+    p1->print_person();
+    cout << "\n";
+    p2->print_person();
+    cout << "\n";
+
+    if (added1 && added2)
+        cout << "They are now friends!\n";
+    else
+        cout << "They were already friends.\n";
 
 
 }
@@ -338,11 +344,27 @@ void Network::showMenu(){
 
             cout << "Person 1"; 
             cout << "First name: ";
+            getline(cin, fname);
             cout << "Last name: ";
+            getline(cin, lname);
+            Person* p1 = search(fname, lname);
+            if (!p1) {
+                cout << "Person not found\n";
+                return;
+            }
 
             cout << "Person 2";
             cout << "First name: ";
+            getline(cin, fname);
             cout << "Last name: ";
+            getline(cin, lname);
+            Person* p2 = search(fname, lname);
+            if (!p2) {
+                cout << "Person not found\n";
+                return;
+            }
+
+            connect(p1, p2);
         }
         
         else

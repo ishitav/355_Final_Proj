@@ -18,6 +18,9 @@ private:
     Person* next;
     Person* prev;
 
+    // list of friends
+    std::vector<Person*> friends;
+
 public: 
     Person();
     ~Person();
@@ -28,6 +31,9 @@ public:
 	void set_person(string filename);
     bool operator==(const Person& rhs);
     bool operator!=(const Person& rhs);
+
+    // add friend
+    bool add_friend(Person* p);     
 };
 
 
