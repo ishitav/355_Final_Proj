@@ -24,6 +24,8 @@ class Network{
         void push_back(Person* newEntry);
         bool remove(string fname, string lname);
         void showMenu();
+        void loadDB(string fileName);
+        void saveDB(string fileName);
 };
 
 #endif
