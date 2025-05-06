@@ -1,5 +1,6 @@
-
 #include "person.h"
+#include "misc.h"
+#include <string>
 
 Person::Person(){
     // I'm already done! 
@@ -123,6 +124,7 @@ void Person::set_person(string filename){
 
     file.close();
 }
+
 bool Person::operator==(const Person& rhs){
     // TODO: Complete this method!
     // Note: you should check first name, last name and birthday between two persons
@@ -148,7 +150,6 @@ bool Person::operator!=(const Person& rhs){
     return true;
 }
 
-
 void Person::print_person(){
     // Already implemented for you! Do not change!
 	cout << l_name <<", " << f_name << endl;
@@ -156,4 +157,30 @@ void Person::print_person(){
     
     phone->print();
     email->print();
+}
+
+void Person::makeFriend(Person* p){
+    // prevent self-friendship or duplicates
+    if(p == this) return;
+    for (auto f : myfriends){
+        if (f == p) return;
+    }
+    myfriends.push_back(p);   // add person to friends vector
+}
+
+string Person::get_code_name(){
+    return codeName(f_name, l_name);
+}
+
+// print all friends of person (for reference only)
+void Person::print_friends(){
+    if (myfriends.empty()) {
+        cout << "No friends." << endl;
+        return;
+    }
+
+    cout << "Friends of" << f_name << " " << l_name << ":" << endl;
+    for(auto f : myfriends){
+        cout << " - " << f->f_name << " " << f->l_name << endl;
+    }
 }
