@@ -157,6 +157,11 @@ void Person::print_person(){
     
     phone->print();
     email->print();
+    
+    // ===== Phase 4: Print friends =====
+    for (auto f : myfriends) {
+        cout << f->get_code_name() << " (" << f->f_name << " " << f->l_name << ")" << endl;
+    }
 }
 
 void Person::makeFriend(Person* p){
@@ -173,14 +178,32 @@ string Person::get_code_name(){
 }
 
 // print all friends of person (for reference only)
-void Person::print_friends(){
+void Person::print_friends() {
     if (myfriends.empty()) {
         cout << "No friends." << endl;
         return;
     }
 
-    cout << "Friends of" << f_name << " " << l_name << ":" << endl;
-    for(auto f : myfriends){
-        cout << " - " << f->f_name << " " << f->l_name << endl;
+    // Sort the friends based on the sorting rules
+    sort(myfriends.begin(), myfriends.end(), [](Person* a, Person* b) {
+        string codeA = a->get_code_name();
+        string codeB = b->get_code_name();
+
+        if (codeA[0] != codeB[0]) {
+            return codeA[0] < codeB[0];
+        } else if (codeA.length() > 1 && codeB.length() > 1 && codeA[1] != codeB[1]) {
+            return codeA[1] < codeB[1];
+        } else {
+            return codeA < codeB; // fallback, any order if first two letters are same
+        }
+    });
+
+    // Print current person
+    cout << f_name << ", " << l_name << endl;
+    cout << "--------------------------------" << endl;
+
+    // Print sorted friends
+    for (auto f : myfriends) {
+        cout << f->f_name << ", " << f->l_name << endl;
     }
 }
