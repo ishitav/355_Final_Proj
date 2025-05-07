@@ -28,6 +28,7 @@ class Network{
         void showMenu();
         void loadDB(string fileName);
         void saveDB(string fileName);
+        void recommend_friends(Person* p);
 
         void connect_friends();
 };

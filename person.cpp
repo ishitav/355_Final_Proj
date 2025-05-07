@@ -157,7 +157,7 @@ void Person::print_person(){
     
     phone->print();
     email->print();
-    
+
     // ===== Phase 4: Print friends =====
     for (auto f : myfriends) {
         cout << f->get_code_name() << " (" << f->f_name << " " << f->l_name << ")" << endl;
@@ -206,4 +206,16 @@ void Person::print_friends() {
     for (auto f : myfriends) {
         cout << f->f_name << ", " << f->l_name << endl;
     }
+}
+
+void Person::set_attribute(std::string key, std::string value) {
+    attributes[key] = value;
+}
+
+std::string Person::get_attribute(std::string key) {
+    return attributes.count(key) ? attributes[key] : "";
+}
+
+std::map<std::string, std::string>& Person::get_attributes() {
+    return attributes;
 }

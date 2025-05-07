@@ -62,9 +62,6 @@ Person* Network::search(string fname, string lname) {
     return NULL;
 }
 
-
-
-
 void Network::loadDB(string filename){
     ifstream infile(filename);
     if (!infile) {
@@ -253,6 +250,7 @@ void Network::showMenu(){
         cout << "4. Remove a person \n";
         cout << "5. Print people with last name  \n";
         cout << "6. Connect two friends\n";
+        cout << "7. Test Friend Reccomendation System\n";
         cout << "\nSelect an option ... ";
         
         
@@ -271,46 +269,68 @@ void Network::showMenu(){
         cout << "\033[2J\033[1;1H";
 
         if (opt==1){
-            // TODO: Complete me!
             cout << "Saving network database \n";
             cout << "Enter the name of the save file: ";
-            // Save the network database into the file with the given name,
-            // with each person saved in the format the save as printing out the person info,
-            // and people are delimited similar to "networkDB.txt" format
+            getline(cin, fileName);
+            saveDB(fileName);
             cout << "Network saved in " << fileName << endl;
         }
         else if (opt==2){
-            // TODO: Complete me!
             cout << "Loading network database \n";
-            // TODO: print all the files in this same directory that have "networkDB.txt" format
-            // print format: one filename one line.
-            // This step just shows all the available .txt file to load.
-            cout << "Enter the name of the load file: "; 
-            // If file with name FILENAME does not exist: 
-            cout << "File FILENAME does not exist!" << endl;
-            // If file is loaded successfully, also print the count of people in it: 
-            cout << "Network loaded from " << fileName << " with " << count << " people \n";
+            cout << "Enter the name of the load file: ";
+            getline(cin, fileName);
+        
+            ifstream infile(fileName);
+            if (!infile) {
+                cout << "File " << fileName << " does not exist!\n";
+            } else {
+                infile.close(); // optional
+                loadDB(fileName);
+                cout << "Network loaded from " << fileName << " with " << count << " people \n";
+            }
         }
+
         else if (opt == 3){
-            // TODO: Complete me!
-            // TODO: use push_front, and not push_back 
-            // Add a new Person ONLY if it does not exists!
             cout << "Adding a new person \n";
+            Person* newPerson = new Person();  // prompts user for details
+
+            if (search(newPerson) == nullptr) {
+                push_front(newPerson);  // use push_front per spec
+                cout << "Person added successfully.\n";
+            } else {
+                delete newPerson;
+                cout << "Person already exists. Not added.\n";
+            }
         }
         else if (opt == 4){
-            // TODO: Complete me!
-            // if found, cout << "Remove Successful! \n";
-            // if not found: cout << "Person not found! \n";
             cout << "Removing a person \n";
             cout << "First name: ";
+            getline(cin, fname);
             cout << "Last name: ";
+            getline(cin, lname);
+
+            if (remove(fname, lname)) {
+                cout << "Remove Successful!\n";
+            } else {
+                cout << "Person not found!\n";
+            }
         }
         else if (opt==5){
-            // TODO: Complete me!
-            // print the people with the given last name
-            // if not found: cout << "Person not found! \n";
             cout << "Print people with last name \n";
             cout << "Last name: ";
+            getline(cin, lname);
+
+            bool found = false;
+            for (Person* curr = head; curr != nullptr; curr = curr->next) {
+                if (curr->l_name == lname) {
+                    curr->print_person();
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                cout << "Person not found! \n";
+            }
         }else if (opt == 6) {
             cout << "Make friends\n";
         
@@ -347,6 +367,102 @@ void Network::showMenu(){
             p2->makeFriend(p1);
         
             cout << "\nFriendship created!\n";
+        } else if (opt == 7) {
+            cout << "\n===== PHASE 3: INTELLIGENT FRIEND RECOMMENDATION DEMO =====\n";
+        
+            // 1. Create test users
+            Person* alice = new Person("Alice", "Smith", "3/14/1995", "alice@usc.edu", "310-123-4567");
+            Person* bob = new Person("Bob", "Nguyen", "6/22/1994", "bob@usc.edu", "310-222-3333");
+            Person* carol = new Person("Carol", "Lee", "11/5/1996", "carol@gmail.com", "213-444-5555");
+            Person* daniel = new Person("Daniel", "Rodriguez", "8/9/1995", "daniel@yahoo.com", "415-666-7777");
+            Person* emma = new Person("Emma", "Khan", "1/1/1997", "emma@harvard.edu", "617-888-9999");
+        
+            // 2. Set attributes
+            alice->set_attribute("college", "USC");
+            alice->set_attribute("major", "CS");
+            alice->set_attribute("state", "CA");
+            alice->set_attribute("email_provider", "usc");
+        
+            bob->set_attribute("college", "USC");
+            bob->set_attribute("major", "CS");
+            bob->set_attribute("state", "CA");
+            bob->set_attribute("email_provider", "usc");
+        
+            carol->set_attribute("college", "UCLA");
+            carol->set_attribute("major", "CS");
+            carol->set_attribute("state", "CA");
+            carol->set_attribute("email_provider", "gmail");
+        
+            daniel->set_attribute("college", "NYU");
+            daniel->set_attribute("major", "Philosophy");
+            daniel->set_attribute("state", "NY");
+            daniel->set_attribute("email_provider", "yahoo");
+        
+            emma->set_attribute("college", "Harvard");
+            emma->set_attribute("major", "Law");
+            emma->set_attribute("state", "MA");
+            emma->set_attribute("email_provider", "harvard");
+        
+            // 3. Add to network
+            push_back(alice);
+            push_back(bob);
+            push_back(carol);
+            push_back(daniel);
+            push_back(emma);
+        
+            // Group into vector for looping
+            vector<Person*> testUsers = {alice, bob, carol, daniel, emma};
+        
+            // 4. Show user details
+            cout << "\n--- TEST USERS AND THEIR ATTRIBUTES ---\n";
+            for (Person* p : testUsers) {
+                cout << p->get_code_name() << " (" << p->f_name << " " << p->l_name << ")\n";
+                cout << "  College: " << p->get_attribute("college") << "\n";
+                cout << "  Major: " << p->get_attribute("major") << "\n";
+                cout << "  State: " << p->get_attribute("state") << "\n";
+                cout << "  Email Provider: " << p->get_attribute("email_provider") << "\n\n";
+            }
+        
+            // 5. Pre-define a friendship
+            alice->makeFriend(emma);
+            cout << "--- Friendship Created: Alice is already friends with Emma ---\n\n";
+        
+            // 6. Mini interactive loop: pick who to recommend for
+            while (true) {
+                cout << "\nSelect a user to run friend recommendation (or type 'exit'):\n";
+                for (size_t i = 0; i < testUsers.size(); ++i) {
+                    cout << "  " << (i + 1) << ". " << testUsers[i]->f_name << " " << testUsers[i]->l_name << "\n";
+                }
+                cout << "> ";
+        
+                string input;
+                getline(cin, input);
+                if (input == "exit") break;
+        
+                int choice = -1;
+                try {
+                    choice = stoi(input);
+                } catch (...) {
+                    cout << "Invalid input. Try again.\n";
+                    continue;
+                }
+        
+                if (choice < 1 || choice > testUsers.size()) {
+                    cout << "Invalid selection. Try again.\n";
+                    continue;
+                }
+        
+                Person* selected = testUsers[choice - 1];
+                cout << "\n>>> Recommending friends for " << selected->f_name << " " << selected->l_name << "...\n";
+                recommend_friends(selected);
+            }
+        
+            // 7. Cleanup test users
+            for (Person* p : testUsers) {
+                remove(p->f_name, p->l_name);
+            }
+        
+            cout << "\n>>> Test complete. Returning to main menu.\n";
         }
         
         else
@@ -358,5 +474,53 @@ void Network::showMenu(){
         string temp;
         std::getline (std::cin, temp);
         cout << "\033[2J\033[1;1H";
+    }
+}
+
+double compute_similarity(Person* a, Person* b) {
+    double score = 0.0;
+
+    if (a->get_attribute("college") == b->get_attribute("college"))
+        score += 0.4;
+    if (a->get_attribute("major") == b->get_attribute("major"))
+        score += 0.3;
+    if (a->get_attribute("state") == b->get_attribute("state"))
+        score += 0.1;
+    if (a->get_attribute("email_provider") == b->get_attribute("email_provider"))
+        score += 0.2;
+
+    return score;
+}
+
+void Network::recommend_friends(Person* p) {
+    std::vector<std::pair<double, Person*>> candidates;
+
+    for (Person* current = head; current != nullptr; current = current->next) {
+        if (current == p) continue;
+
+        // Skip if already friends
+        bool already_friend = false;
+        for (auto f : p->myfriends) {
+            if (f == current) {
+                already_friend = true;
+                break;
+            }
+        }
+        if (already_friend) continue;
+
+        double sim = compute_similarity(p, current);
+        if (sim > 0.0)
+            candidates.push_back({sim, current});
+    }
+
+    std::sort(candidates.begin(), candidates.end(),
+        [](const std::pair<double, Person*>& a, const std::pair<double, Person*>& b) {
+            return a.first > b.first;
+        });
+
+    std::cout << "Recommended friends for " << p->f_name << " " << p->l_name << ":\n";
+    for (size_t i = 0; i < std::min(candidates.size(), size_t(3)); ++i) {
+        Person* rec = candidates[i].second;
+        std::cout << rec->get_code_name() << " (" << rec->f_name << " " << rec->l_name << ") — score: " << candidates[i].first << "\n";
     }
 }

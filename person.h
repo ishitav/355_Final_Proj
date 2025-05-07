@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+#include <map>         // for attribute map
 
 using namespace std;
 
@@ -23,7 +24,9 @@ private:
     Phone* phone;
     Person* next;
     Person* prev;
-    vector<Person*> myfriends;  // <-- should be myfriends, not 'friends'
+    vector<Person*> myfriends;
+
+    map<string, string> attributes;   // key-value attribute metadata
 
 public:
     Person();
@@ -35,12 +38,16 @@ public:
     void set_person();
     void set_person(string filename);
 
-    void print_person();           // Prints person info and friend codes
-    void print_friends();          // Prints sorted friend names
+    void print_person();
+    void print_friends();
+    void makeFriend(Person* p);
 
-    void makeFriend(Person* p);    // Bidirectional friendship logic
+    string get_code_name();
 
-    string get_code_name();        // Returns codeName(f_name, l_name)
+    // Phase 3 metadata support
+    void set_attribute(string key, string value);
+    string get_attribute(string key);
+    map<string, string>& get_attributes();
 
     bool operator==(const Person& rhs);
     bool operator!=(const Person& rhs);
