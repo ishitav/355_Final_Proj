@@ -6,14 +6,15 @@ Caitlin Sullivan (<ccsulliv@usc.edu>)
 
 Gerson Estrada (<gdestrad@usc.edu>)
 
-# Final Project Phase 1: Classes and Methods
+# Final Project Phase 2
 
 This submission includes: 
-- contact.cpp/h completed
-- person.cpp/h completed
-- date.cpp/h completed
-- network.cpp/h completed
-- misc.cpp/h (only has the banner print statement in it?)
+- contact.cpp/h
+- person.cpp/h
+- date.cpp/h
+- network.cpp/h
+- misc.cpp/h
+- Added functionality for friend connections between Person objects (changes in person, network, and misc primarily)
 
 ## Compilation Instructions
 
@@ -21,7 +22,7 @@ To run `main.cpp` or the file that starts the network and calls functions, we mu
 
 `g++ -std=c++11 contact.cpp person.cpp date.cpp network.cpp misc.cpp main.cpp -o proj.out`
 
-We need c++11 for our implementation (overriding virtual functions)
+We need c++11 for our implementation (overriding virtual functions and iterators)
 
 ## Implementation Notes
 
